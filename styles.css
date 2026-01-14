@@ -1,0 +1,286 @@
+/* ===========================================
+   ECCジュニア大学前 Digital Signage Slideshow
+   Highschool Version - New Spec
+   =========================================== */
+
+/* Reset & Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Noto Sans JP', 'M PLUS Rounded 1c', sans-serif;
+    background: #000;
+}
+
+/* Slideshow Container - 16:9 Aspect Ratio */
+.slideshow-container {
+    position: relative;
+    width: 100vw;
+    height: 56.25vw;
+    /* 16:9 */
+    max-height: 100vh;
+    max-width: 177.78vh;
+    /* 16:9 */
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    overflow: hidden;
+    background: #000;
+}
+
+/* Individual Slides */
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease-out;
+    pointer-events: none;
+}
+
+.slide.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    z-index: 2;
+}
+
+.slide.exiting {
+    opacity: 0;
+    z-index: 1;
+}
+
+/* 
+   Image Styling
+   - Standard cover fit
+   - Clean images (no text burn-in)
+*/
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+}
+
+/* 
+   Text Overlay
+   - Positioned at BOTTOM 40% area
+   - NO background (transparent), floating text
+*/
+.text-overlay {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    text-align: center;
+    background: transparent;
+    padding: 20px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* Base Main Title Style */
+.main-title {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 900;
+    font-size: 6vw;
+    margin-bottom: 2vh;
+    line-height: 1.1;
+    /* Text Stroke / Outline Effect */
+    -webkit-text-stroke: 4px #000;
+    paint-order: stroke fill;
+    text-shadow: 5px 5px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
+/* Per-Slide Color Classes */
+
+/* Slide 1: 太陽の様な黄色またはビビッドなオレンジ */
+.color-yellow {
+    color: #FFD700;
+    /* Golden Yellow */
+}
+
+/* Slide 2: 深い青またはダークグリーン */
+.color-blue {
+    color: #1E90FF;
+    /* Dodger Blue */
+}
+
+/* Slide 3: ビビッドなピンク・マゼンタ */
+.color-pink {
+    color: #FF1493;
+    /* Deep Pink */
+}
+
+/* Slide 4: 活力的な黄緑またはターコイズ */
+.color-turquoise {
+    color: #40E0D0;
+    /* Turquoise */
+}
+
+/* Slide 5: あたたかなオレンジまたはコーラルピンク */
+.color-coral {
+    color: #FF7F50;
+    /* Coral */
+}
+
+/* Slide 6: 深い紫またはロイヤルブルー */
+.color-purple {
+    color: #9370DB;
+    /* Medium Purple */
+}
+
+/* Slide 7: 黄金色またはゴールド */
+.color-gold {
+    color: #FFD700;
+    /* Gold */
+}
+
+/* Subtitle - White/Cream with Black Outline */
+.subtitle {
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-weight: 800;
+    font-size: 3.5vw;
+    color: #FFFFF0;
+    /* Ivory/Cream */
+    /* Text Stroke / Outline Effect */
+    -webkit-text-stroke: 3px #000;
+    paint-order: stroke fill;
+    text-shadow: 4px 4px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
+/* Wipe Transition Animations */
+
+/* Diagonal Left to Right (45 degree) */
+@keyframes wipe-diagonal-left {
+    from {
+        clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+    }
+
+    to {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+}
+
+/* Vertical Down */
+@keyframes wipe-vertical-down {
+    from {
+        clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    }
+
+    to {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+}
+
+/* Diagonal Corner (Bottom-Right to Top-Left) */
+@keyframes wipe-diagonal-corner {
+    from {
+        clip-path: polygon(100% 100%, 100% 100%, 100% 100%, 100% 100%);
+    }
+
+    to {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+}
+
+/* Circular (Center Expand) */
+@keyframes wipe-circular {
+    from {
+        clip-path: circle(0% at 50% 50%);
+    }
+
+    to {
+        clip-path: circle(100% at 50% 50%);
+    }
+}
+
+/* Shutter (Venetian Blind style) - simplified as horizontal reveal */
+@keyframes wipe-shutter {
+    from {
+        clip-path: inset(0 100% 0 0);
+    }
+
+    to {
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+/* Squeeze (Horizontal Compression) */
+@keyframes wipe-squeeze {
+    from {
+        clip-path: inset(0 50% 0 50%);
+    }
+
+    to {
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+/* Fade Vertical (Top to Bottom Gradient) */
+@keyframes wipe-fade-vertical {
+    from {
+        clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    }
+
+    to {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+}
+
+/* Apply Animations */
+.slide.wipe-diagonal-left {
+    animation: wipe-diagonal-left 0.6s ease-out forwards;
+}
+
+.slide.wipe-vertical-down {
+    animation: wipe-vertical-down 0.6s ease-out forwards;
+}
+
+.slide.wipe-diagonal-corner {
+    animation: wipe-diagonal-corner 0.6s ease-out forwards;
+}
+
+.slide.wipe-circular {
+    animation: wipe-circular 0.6s ease-out forwards;
+}
+
+.slide.wipe-shutter {
+    animation: wipe-shutter 0.6s ease-out forwards;
+}
+
+.slide.wipe-squeeze {
+    animation: wipe-squeeze 0.6s ease-out forwards;
+}
+
+.slide.wipe-fade-vertical {
+    animation: wipe-fade-vertical 0.6s ease-out forwards;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .main-title {
+        font-size: 8vw;
+        -webkit-text-stroke: 2px #000;
+    }
+
+    .subtitle {
+        font-size: 5vw;
+        -webkit-text-stroke: 1.5px #000;
+    }
+}
